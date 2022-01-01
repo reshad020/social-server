@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json())
 
 app.get('/', (req,res)=>{
-    res.send('Language server is running')
+    res.send('Parcel server is running')
 })
 app.listen(port, ()=>{
     console.log('Server is running',port);
@@ -25,29 +25,30 @@ async function run(){
     try{
         //connect and create in mongodb
         client.connect();
-        const database = client.db('socialmedia-app');
-        const userCollection = database.collection('user');
+        const database = client.db('TheParcelGuy');
+        const parcelCollection = database.collection('parcels');
 
         //Get users api
-        app.get('/users', async(req,res) =>{
-            const cursor = userCollection.find({});
-            const users = await cursor.toArray();
-            res.send(users);
+        app.get('/parcels', async(req,res) =>{
+            const cursor = parcelCollection.find({});
+            const parcels = await cursor.toArray();
+            res.send(parcels);
 
         })
 
-        app.get('/users/:email', async(req,res) =>{
+        app.get('/parcels/:email', async(req,res) =>{
             const email = req.params.email;
             const query = {email: email};
-            const user = await userCollection.findOne(query);
-            res.json(user);
+            const parcel = parcelCollection.find(query);
+            const myParcel = await parcel.toArray();
+            res.json(myParcel);
             console.log('hit api')
 
         })
 
-        app.post('/users', async(req,res) =>{
-            const user = req.body;
-            const result = await userCollection.insertOne(user);
+        app.post('/parcels', async(req,res) =>{
+            const parcel = req.body;
+            const result = await parcelCollection.insertOne(parcel);
             console.log(result);
             res.json(result);
             console.log('hit api');
